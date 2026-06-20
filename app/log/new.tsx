@@ -22,7 +22,9 @@ export default function NewLogScreen() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    getShoes(false).then(setShoes);
+    getShoes(false)
+      .then(setShoes)
+      .catch((e) => Alert.alert('불러오기 실패', String(e)));
   }, []);
 
   async function addPhoto() {

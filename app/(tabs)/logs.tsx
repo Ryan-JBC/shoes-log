@@ -21,7 +21,7 @@ export default function LogsTab() {
     (async () => {
       try {
         const shoes = await getShoes(true);
-        setHasShoes(shoes.length > 0);
+        setHasShoes(shoes.some((s) => s.retired === 0));
         const nameById = new Map(shoes.map((s) => [s.id, s.name]));
         const logs = await getWearLogs();
         const built: Row[] = [];
