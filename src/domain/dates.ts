@@ -11,6 +11,7 @@ export function isValidISODate(s: string): boolean {
 
 export function isNotFuture(s: string, today: string): boolean {
   // ISO 'YYYY-MM-DD' 문자열은 사전식 비교가 날짜 순서와 일치
+  if (!isValidISODate(s)) return false;
   return s <= today;
 }
 
