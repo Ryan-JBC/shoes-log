@@ -5,11 +5,14 @@ import { getShoe, setShoeRetired, deleteShoe } from '../../src/db/shoes';
 import { getWearLogsForShoe, getPhotosForLog } from '../../src/db/wearLogs';
 import { deletePhoto } from '../../src/services/photoStorage';
 import { totalDistance, replacementStatus, remainingDistance } from '../../src/domain/mileage';
+import { daysSince } from '../../src/domain/dates';
+import { useTheme } from '../../src/theme/ThemeProvider';
 import { PhotoPlaceholder } from '../../src/components/PhotoPlaceholder';
 import { ProgressBar } from '../../src/components/ProgressBar';
 import { Shoe, WearLog } from '../../src/types';
 
 export default function ShoeDetailScreen() {
+  const { colors } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const shoeId = Number(id);
   const [shoe, setShoe] = useState<Shoe | null>(null);
@@ -79,7 +82,7 @@ export default function ShoeDetailScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
+    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={{ padding: 16, gap: 12 }}>
       <Stack.Screen options={{ title: shoe.name }} />
       <View style={{ alignItems: 'center' }}>
         {shoe.photo_uri ? (
@@ -88,44 +91,49 @@ export default function ShoeDetailScreen() {
           <PhotoPlaceholder size={160} />
         )}
       </View>
-      <Text style={{ fontSize: 22, fontWeight: 'bold', textAlign: 'center' }}>{shoe.name}</Text>
-      {shoe.brand ? <Text style={{ textAlign: 'center', color: '#666' }}>{shoe.brand} · {shoe.category ?? ''}</Text> : null}
+      <Text style={{ fontSize: 22, fontWeight: 'bold', textAlign: 'center', color: colors.textPrimary }}>{shoe.name}</Text>
+      {shoe.brand ? <Text style={{ textAlign: 'center', color: colors.textSecondary }}>{shoe.brand} · {shoe.category ?? ''}</Text> : null}
 
-      <View style={{ gap: 6, padding: 12, backgroundColor: '#fafafa', borderRadius: 12 }}>
-        <Text style={{ fontWeight: '600' }}>누적 거리: {total.toFixed(1)} km</Text>
+      <View style={{ gap: 6, padding: 12, backgroundColor: colors.card, borderRadius: 12 }}>
+        <Text style={{ fontWeight: '600', color: colors.textPrimary }}>누적 거리: {total.toFixed(1)} km</Text>
         {shoe.target_distance != null ? (
           <>
             <ProgressBar
               ratio={total / shoe.target_distance}
-              color={status === 'reached' ? '#f44336' : status === 'imminent' ? '#ff9800' : '#4caf50'}
+              color={status === 'reached' ? colors.danger : status === 'imminent' ? colors.warning : colors.success}
             />
-            <Text style={{ color: '#666' }}>
+            <Text style={{ color: colors.textSecondary }}>
               목표 {shoe.target_distance} km · 남은 {remaining?.toFixed(1)} km
               {status === 'reached' ? ' · 🔴 교체 권장' : status === 'imminent' ? ' · 🟠 교체 임박' : ''}
             </Text>
           </>
         ) : (
-          <Text style={{ color: '#999' }}>마일리지 미추적 (목표 거리 미설정)</Text>
+          <Text style={{ color: colors.textMuted }}>마일리지 미추적 (목표 거리 미설정)</Text>
+        )}
+        {shoe.purchase_date && daysSince(shoe.purchase_date, new Date().toISOString().slice(0,10)) != null && (
+          <Text style={{ color: colors.textMuted }}>
+            구매일 {shoe.purchase_date} · 구매 후 {daysSince(shoe.purchase_date, new Date().toISOString().slice(0,10))}일
+          </Text>
         )}
       </View>
 
-      <Text style={{ fontWeight: 'bold', fontSize: 16, marginTop: 8 }}>착화 일지 ({logs.length})</Text>
+      <Text style={{ fontWeight: 'bold', fontSize: 16, marginTop: 8, color: colors.textPrimary }}>착화 일지 ({logs.length})</Text>
       {logs.map((log) => (
         <Pressable
           key={log.id}
           onPress={() => router.push(`/log/${log.id}`)}
-          style={{ padding: 12, backgroundColor: '#f5f5f5', borderRadius: 8 }}
+          style={{ padding: 12, backgroundColor: colors.card, borderRadius: 8 }}
         >
-          <Text>{log.date}{log.distance != null ? ` · ${log.distance} km` : ''}</Text>
-          {log.memo ? <Text style={{ color: '#666' }} numberOfLines={1}>{log.memo}</Text> : null}
+          <Text style={{ color: colors.textPrimary }}>{log.date}{log.distance != null ? ` · ${log.distance} km` : ''}</Text>
+          {log.memo ? <Text style={{ color: colors.textSecondary }} numberOfLines={1}>{log.memo}</Text> : null}
         </Pressable>
       ))}
 
-      <Pressable onPress={onRetire} style={{ padding: 14, borderRadius: 10, backgroundColor: '#eee', alignItems: 'center', marginTop: 12 }}>
-        <Text>{shoe.retired ? '은퇴 해제' : '은퇴 처리'}</Text>
+      <Pressable onPress={onRetire} style={{ padding: 14, borderRadius: 10, backgroundColor: colors.card, alignItems: 'center', marginTop: 12 }}>
+        <Text style={{ color: colors.textPrimary }}>{shoe.retired ? '은퇴 해제' : '은퇴 처리'}</Text>
       </Pressable>
-      <Pressable onPress={onDelete} style={{ padding: 14, borderRadius: 10, backgroundColor: '#ffebee', alignItems: 'center' }}>
-        <Text style={{ color: '#c62828' }}>삭제</Text>
+      <Pressable onPress={onDelete} style={{ padding: 14, borderRadius: 10, backgroundColor: colors.card, alignItems: 'center' }}>
+        <Text style={{ color: colors.danger }}>삭제</Text>
       </Pressable>
     </ScrollView>
   );
