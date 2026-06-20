@@ -2,7 +2,8 @@ import { useState, useCallback } from 'react';
 import { ScrollView, View, Text, Image, Pressable, Alert } from 'react-native';
 import { useLocalSearchParams, useFocusEffect, router, Stack } from 'expo-router';
 import { getShoe, setShoeRetired, deleteShoe } from '../../src/db/shoes';
-import { getWearLogsForShoe } from '../../src/db/wearLogs';
+import { getWearLogsForShoe, getPhotosForLog } from '../../src/db/wearLogs';
+import { deletePhoto } from '../../src/services/photoStorage';
 import { totalDistance, replacementStatus, remainingDistance } from '../../src/domain/mileage';
 import { PhotoPlaceholder } from '../../src/components/PhotoPlaceholder';
 import { ProgressBar } from '../../src/components/ProgressBar';
@@ -56,6 +57,17 @@ export default function ShoeDetailScreen() {
         style: 'destructive',
         onPress: async () => {
           try {
+            // remove this shoe's representative photo file
+            if (shoe?.photo_uri) {
+              await deletePhoto(shoe.photo_uri);
+            }
+            // remove all photo files belonging to this shoe's wear logs
+            for (const log of logs) {
+              const photos = await getPhotosForLog(log.id);
+              for (const p of photos) {
+                await deletePhoto(p.photo_uri);
+              }
+            }
             await deleteShoe(shoeId);
             router.back();
           } catch (e) {

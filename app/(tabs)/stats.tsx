@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, View, Text, Alert } from 'react-native';
 import { useFocusEffect, Stack } from 'expo-router';
 import { getShoes } from '../../src/db/shoes';
 import { getWearLogs } from '../../src/db/wearLogs';
@@ -17,28 +17,32 @@ export default function StatsTab() {
 
   const load = useCallback(() => {
     (async () => {
-      const shoes = await getShoes(true);
-      const logs = await getWearLogs();
-      const month = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
+      try {
+        const shoes = await getShoes(true);
+        const logs = await getWearLogs();
+        const month = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
 
-      let md = 0;
-      const byShoe = new Map<number, ShoeStat>();
-      for (const s of shoes) byShoe.set(s.id, { name: s.name, total: 0, count: 0 });
+        let md = 0;
+        const byShoe = new Map<number, ShoeStat>();
+        for (const s of shoes) byShoe.set(s.id, { name: s.name, total: 0, count: 0 });
 
-      for (const log of logs) {
-        if (log.date.startsWith(month)) md += log.distance ?? 0;
-        const stat = byShoe.get(log.shoe_id);
-        if (stat) {
-          stat.total += log.distance ?? 0;
-          stat.count += 1;
+        for (const log of logs) {
+          if (log.date.startsWith(month)) md += log.distance ?? 0;
+          const stat = byShoe.get(log.shoe_id);
+          if (stat) {
+            stat.total += log.distance ?? 0;
+            stat.count += 1;
+          }
         }
-      }
 
-      const arr = [...byShoe.values()].sort((a, b) => b.total - a.total);
-      setMonthDistance(md);
-      setStats(arr);
-      const top = [...arr].sort((a, b) => b.count - a.count)[0];
-      setMostWorn(top && top.count > 0 ? top.name : null);
+        const arr = [...byShoe.values()].sort((a, b) => b.total - a.total);
+        setMonthDistance(md);
+        setStats(arr);
+        const top = [...arr].sort((a, b) => b.count - a.count)[0];
+        setMostWorn(top && top.count > 0 ? top.name : null);
+      } catch (e) {
+        Alert.alert('불러오기 실패', String(e));
+      }
     })();
   }, []);
 

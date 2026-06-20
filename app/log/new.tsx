@@ -5,7 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { getShoes } from '../../src/db/shoes';
 import { addWearLog } from '../../src/db/wearLogs';
 import { validateWearLogInput } from '../../src/domain/validation';
-import { savePhotos } from '../../src/services/photoStorage';
+import { savePhotos, deletePhoto } from '../../src/services/photoStorage';
 import { Shoe, NewWearLog } from '../../src/types';
 
 function today(): string {
@@ -46,8 +46,9 @@ export default function NewLogScreen() {
       return;
     }
     setSaving(true);
+    let savedUris: string[] = [];
     try {
-      const savedUris = await savePhotos(photos);
+      savedUris = await savePhotos(photos);
       const input: NewWearLog = {
         shoe_id: shoeId,
         date,
@@ -58,6 +59,9 @@ export default function NewLogScreen() {
       await addWearLog(input);
       router.back();
     } catch (e) {
+      for (const uri of savedUris) {
+        await deletePhoto(uri);
+      }
       Alert.alert('저장 실패', String(e));
     } finally {
       setSaving(false);
