@@ -5,6 +5,7 @@ import { getWearLogs, getPhotosForLog } from '../../src/db/wearLogs';
 import { getShoes } from '../../src/db/shoes';
 import { EmptyState } from '../../src/components/EmptyState';
 import { PhotoPlaceholder } from '../../src/components/PhotoPlaceholder';
+import { useTheme } from '../../src/theme/ThemeProvider';
 import { WearLog } from '../../src/types';
 
 interface Row {
@@ -14,6 +15,7 @@ interface Row {
 }
 
 export default function LogsTab() {
+  const { colors } = useTheme();
   const [rows, setRows] = useState<Row[]>([]);
   const [hasShoes, setHasShoes] = useState(true);
 
@@ -43,7 +45,7 @@ export default function LogsTab() {
   useFocusEffect(load);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack.Screen
         options={{
           title: '일지',
@@ -58,7 +60,7 @@ export default function LogsTab() {
               }}
               style={{ paddingHorizontal: 12 }}
             >
-              <Text style={{ fontSize: 26 }}>＋</Text>
+              <Text style={{ fontSize: 26, color: colors.textPrimary }}>＋</Text>
             </Pressable>
           ),
         }}
@@ -73,7 +75,7 @@ export default function LogsTab() {
           renderItem={({ item }) => (
             <Pressable
               onPress={() => router.push(`/log/${item.log.id}`)}
-              style={{ flexDirection: 'row', gap: 12, padding: 12, backgroundColor: '#fafafa', borderRadius: 12, marginBottom: 10 }}
+              style={{ flexDirection: 'row', gap: 12, padding: 12, backgroundColor: colors.card, borderRadius: 12, marginBottom: 10 }}
             >
               {item.thumb ? (
                 <Image source={{ uri: item.thumb }} style={{ width: 56, height: 56, borderRadius: 8 }} />
@@ -81,11 +83,11 @@ export default function LogsTab() {
                 <PhotoPlaceholder size={56} />
               )}
               <View style={{ flex: 1, justifyContent: 'center' }}>
-                <Text style={{ fontWeight: 'bold' }}>{item.shoeName}</Text>
-                <Text style={{ color: '#666' }}>
+                <Text style={{ fontWeight: 'bold', color: colors.textPrimary }}>{item.shoeName}</Text>
+                <Text style={{ color: colors.textSecondary }}>
                   {item.log.date}{item.log.distance != null ? ` · ${item.log.distance} km` : ''}
                 </Text>
-                {item.log.memo ? <Text style={{ color: '#888' }} numberOfLines={1}>{item.log.memo}</Text> : null}
+                {item.log.memo ? <Text style={{ color: colors.textMuted }} numberOfLines={1}>{item.log.memo}</Text> : null}
               </View>
             </Pressable>
           )}

@@ -4,9 +4,11 @@ import { useLocalSearchParams, useFocusEffect, router, Stack } from 'expo-router
 import { getWearLog, getPhotosForLog, deleteWearLog } from '../../src/db/wearLogs';
 import { getShoe } from '../../src/db/shoes';
 import { deletePhoto } from '../../src/services/photoStorage';
+import { useTheme } from '../../src/theme/ThemeProvider';
 import { WearLog, WearLogPhoto } from '../../src/types';
 
 export default function LogDetailScreen() {
+  const { colors } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const logId = Number(id);
   const { width } = useWindowDimensions();
@@ -34,8 +36,8 @@ export default function LogDetailScreen() {
 
   if (!log) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>불러오는 중...</Text>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <Text style={{ color: colors.textSecondary }}>불러오는 중...</Text>
       </View>
     );
   }
@@ -62,13 +64,13 @@ export default function LogDetailScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
+    <ScrollView contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: colors.background }}>
       <Stack.Screen options={{ title: log.date }} />
-      <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{shoeName}</Text>
-      <Text style={{ color: '#666' }}>
+      <Text style={{ fontSize: 20, fontWeight: 'bold', color: colors.textPrimary }}>{shoeName}</Text>
+      <Text style={{ color: colors.textSecondary }}>
         {log.date}{log.distance != null ? ` · ${log.distance} km` : ''}
       </Text>
-      {log.memo ? <Text style={{ fontSize: 16 }}>{log.memo}</Text> : null}
+      {log.memo ? <Text style={{ fontSize: 16, color: colors.textPrimary }}>{log.memo}</Text> : null}
       {photos.map((p) => (
         <Image
           key={p.id}
@@ -76,8 +78,8 @@ export default function LogDetailScreen() {
           style={{ width: width - 32, height: width - 32, borderRadius: 12 }}
         />
       ))}
-      <Pressable onPress={onDelete} style={{ padding: 14, borderRadius: 10, backgroundColor: '#ffebee', alignItems: 'center', marginTop: 8 }}>
-        <Text style={{ color: '#c62828' }}>일지 삭제</Text>
+      <Pressable onPress={onDelete} style={{ padding: 14, borderRadius: 10, backgroundColor: colors.card, alignItems: 'center', marginTop: 8 }}>
+        <Text style={{ color: colors.danger }}>일지 삭제</Text>
       </Pressable>
     </ScrollView>
   );
