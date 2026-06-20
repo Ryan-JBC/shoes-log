@@ -6,6 +6,7 @@ let db: SQLite.SQLiteDatabase | null = null;
 export function getDb(): SQLite.SQLiteDatabase {
   if (!db) {
     db = SQLite.openDatabaseSync('shoeslog.db');
+    db.execSync('PRAGMA foreign_keys = ON;');
   }
   return db;
 }

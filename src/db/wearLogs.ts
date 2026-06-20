@@ -23,6 +23,9 @@ export async function addWearLog(input: NewWearLog): Promise<number> {
       );
     }
   });
+  if (logId === 0) {
+    throw new Error('addWearLog: insert did not return a row id');
+  }
   return logId;
 }
 
