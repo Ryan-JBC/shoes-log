@@ -31,6 +31,11 @@ CREATE TABLE IF NOT EXISTS wear_log_photos (
   FOREIGN KEY (wear_log_id) REFERENCES wear_logs(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_wear_logs_shoe ON wear_logs(shoe_id);
 CREATE INDEX IF NOT EXISTS idx_photos_log ON wear_log_photos(wear_log_id);
 `;
