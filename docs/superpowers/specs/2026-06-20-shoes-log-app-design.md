@@ -72,7 +72,10 @@ React Native (Expo)
 | wear_log_id | INTEGER FK → wear_logs.id | 어떤 일지 |
 | photo_uri | TEXT | 사진 파일 경로 |
 
-**누적 거리는 저장하지 않고** `wear_logs.distance`의 합계로 계산한다(항상 정확, 데이터 꼬임 방지). 교체 판정 = `누적합 ≥ target_distance`(도달) 또는 임박 임계값 도달.
+**누적 거리는 저장하지 않고** `wear_logs.distance`의 합계로 계산한다(항상 정확, 데이터 꼬임 방지). 교체 판정:
+- **임박**: `target_distance − 누적합 ≤ 50km` (남은 거리 50km 이하) → 🔴 배지
+- **도달**: `누적합 ≥ target_distance` → "교체 권장" 표시
+- `target_distance`가 비어 있으면 판정하지 않음 (마일리지 미추적 신발)
 
 ## 5. 화면 구성 (하단 탭 3개)
 
