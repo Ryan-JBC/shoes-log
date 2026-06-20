@@ -33,8 +33,8 @@ export default function ShoeDetailScreen() {
 
   if (!shoe) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>불러오는 중...</Text>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <Text style={{ color: colors.textSecondary }}>불러오는 중...</Text>
       </View>
     );
   }
