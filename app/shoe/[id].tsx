@@ -16,8 +16,12 @@ export default function ShoeDetailScreen() {
 
   const load = useCallback(() => {
     (async () => {
-      setShoe(await getShoe(shoeId));
-      setLogs(await getWearLogsForShoe(shoeId));
+      try {
+        setShoe(await getShoe(shoeId));
+        setLogs(await getWearLogsForShoe(shoeId));
+      } catch (e) {
+        Alert.alert('불러오기 실패', String(e));
+      }
     })();
   }, [shoeId]);
 
@@ -36,8 +40,12 @@ export default function ShoeDetailScreen() {
   const remaining = remainingDistance(total, shoe.target_distance);
 
   async function onRetire() {
-    await setShoeRetired(shoeId, shoe!.retired === 0);
-    load();
+    try {
+      await setShoeRetired(shoeId, shoe!.retired === 0);
+      load();
+    } catch (e) {
+      Alert.alert('오류', String(e));
+    }
   }
 
   function onDelete() {
@@ -47,8 +55,12 @@ export default function ShoeDetailScreen() {
         text: '삭제',
         style: 'destructive',
         onPress: async () => {
-          await deleteShoe(shoeId);
-          router.back();
+          try {
+            await deleteShoe(shoeId);
+            router.back();
+          } catch (e) {
+            Alert.alert('삭제 실패', String(e));
+          }
         },
       },
     ]);
