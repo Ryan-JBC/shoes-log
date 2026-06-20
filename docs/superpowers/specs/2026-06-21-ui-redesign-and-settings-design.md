@@ -64,6 +64,11 @@
 - 은퇴 신발 카드는 흐리게(`opacity`) 표시. 탭하면 상세로 진입 가능.
 - 상세 화면(`app/shoe/[id].tsx`)의 "은퇴 해제" 버튼은 이미 존재 → 이제 은퇴 신발에 실제로 도달 가능해져 동작이 의미를 가짐.
 
+### 5-2. 구매 후 경과일 표시
+- 신발 카드(`ShoeCard`)와 상세 화면에 거리 정보와 함께 **"구매 후 N일"** 을 표시한다.
+- 계산: `daysSince(purchase_date, 오늘)` (§6-2). **구매일이 없거나 형식이 잘못되면 표시 생략** (null 처리).
+- 카드는 간결하게(예: `구매 후 320일`), 상세는 구매일과 함께 표시.
+
 ## 6. 날짜 입력 + 검증
 
 ### 6-1. 날짜 선택기
@@ -73,9 +78,12 @@
 - 구매일은 선택사항 유지(비울 수 있음). 일지 날짜는 필수, 기본값 오늘.
 
 ### 6-2. 검증 (안전장치, TDD)
-`src/domain/validation.ts`에 날짜 검증 추가:
+날짜 순수 로직은 `src/domain/dates.ts`에 모은다 (TDD):
 - `isValidISODate(s: string): boolean` — 정확히 `YYYY-MM-DD` 형식이며 실제 달력상 유효한 날짜 (예: `2026-13-40` 거부, `abcde`/5글자 거부).
 - `isNotFuture(s: string, today: string): boolean` — 오늘 이하.
+- `daysSince(fromDate: string, today: string): number | null` — 두 날짜 사이 경과 일수 (§5-2의 "구매 후 N일"에 사용). `fromDate`가 없거나 형식이 잘못되면 `null`.
+
+`src/domain/validation.ts`는 위 함수를 사용해 통합:
 - `validateShoeInput`에 구매일이 있으면 형식+미래금지 검사 추가.
 - `validateWearLogInput`에 날짜 형식+미래금지 검사 추가.
 - 위반 시 한국어 에러 메시지 반환, 화면은 저장 차단 + Alert.
@@ -93,11 +101,11 @@
 
 - **스키마**: `settings` 테이블 추가 (기존 테이블 불변).
 - **데이터 계층**: `src/db/settings.ts` 신규; `getShoes` 필터 인자 변경.
-- **도메인(TDD)**: 날짜 검증 함수 추가 및 기존 검증에 통합.
+- **도메인(TDD)**: `src/domain/dates.ts` 신규(형식 검증·미래 금지·경과일), 기존 `validation.ts`에 통합.
 
 ## 9. 테스트
 
-- 도메인 날짜 검증은 **TDD** (Jest): 유효/무효 형식, 경계(오늘=통과, 내일=실패), 빈 값 처리.
+- 도메인 날짜 로직은 **TDD** (Jest): 형식 유효/무효, 미래 금지 경계(오늘=통과, 내일=실패), 빈 값 처리, `daysSince` 경과일(같은 날=0, 과거=양수, 없음=null).
 - `getShoes` 필터 변경에 따른 기존 호출처 타입 정합성은 `tsc`로 확인.
 - 화면/테마는 Expo 앱 실행(폰)으로 수동 검증 — 단, SDK 54 + Expo Go 환경 유지.
 
