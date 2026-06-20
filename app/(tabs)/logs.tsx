@@ -20,7 +20,7 @@ export default function LogsTab() {
   const load = useCallback(() => {
     (async () => {
       try {
-        const shoes = await getShoes(true);
+        const shoes = await getShoes('all');
         setHasShoes(shoes.some((s) => s.retired === 0));
         const nameById = new Map(shoes.map((s) => [s.id, s.name]));
         const logs = await getWearLogs();

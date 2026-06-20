@@ -18,7 +18,7 @@ export default function StatsTab() {
   const load = useCallback(() => {
     (async () => {
       try {
-        const shoes = await getShoes(true);
+        const shoes = await getShoes('all');
         const logs = await getWearLogs();
         const month = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
 

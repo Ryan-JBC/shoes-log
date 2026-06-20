@@ -20,7 +20,7 @@ export default function ShoesTab() {
   const load = useCallback(() => {
     (async () => {
       try {
-        const shoes = await getShoes(false);
+        const shoes = await getShoes('active');
         const built: Row[] = [];
         for (const shoe of shoes) {
           const logs = await getWearLogsForShoe(shoe.id);

@@ -19,12 +19,12 @@ export async function addShoe(input: NewShoe): Promise<number> {
   return result.lastInsertRowId;
 }
 
-export async function getShoes(includeRetired = false): Promise<Shoe[]> {
+export async function getShoes(filter: 'active' | 'retired' | 'all' = 'active'): Promise<Shoe[]> {
   const db = getDb();
-  const where = includeRetired ? '' : 'WHERE retired = 0';
-  return db.getAllAsync<Shoe>(
-    `SELECT * FROM shoes ${where} ORDER BY created_at DESC`,
-  );
+  const where =
+    filter === 'active' ? 'WHERE retired = 0' :
+    filter === 'retired' ? 'WHERE retired = 1' : '';
+  return db.getAllAsync<Shoe>(`SELECT * FROM shoes ${where} ORDER BY created_at DESC`);
 }
 
 export async function getShoe(id: number): Promise<Shoe | null> {

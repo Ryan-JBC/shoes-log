@@ -22,7 +22,7 @@ export default function NewLogScreen() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    getShoes(false)
+    getShoes('active')
       .then(setShoes)
       .catch((e) => Alert.alert('불러오기 실패', String(e)));
   }, []);
