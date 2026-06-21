@@ -42,3 +42,21 @@ export async function deleteShoe(id: number): Promise<void> {
   const db = getDb();
   await db.runAsync('DELETE FROM shoes WHERE id = ?', id);
 }
+
+export async function updateShoe(id: number, input: NewShoe): Promise<void> {
+  const db = getDb();
+  await db.runAsync(
+    `UPDATE shoes SET
+       name = ?, brand = ?, category = ?, photo_uri = ?,
+       purchase_date = ?, price = ?, target_distance = ?
+     WHERE id = ?`,
+    input.name.trim(),
+    input.brand,
+    input.category,
+    input.photo_uri,
+    input.purchase_date,
+    input.price,
+    input.target_distance,
+    id,
+  );
+}
