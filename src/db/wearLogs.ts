@@ -62,3 +62,40 @@ export async function deleteWearLog(id: number): Promise<void> {
   const db = getDb();
   await db.runAsync('DELETE FROM wear_logs WHERE id = ?', id);
 }
+
+export async function updateWearLog(
+  id: number,
+  fields: { shoe_id: number; date: string; distance: number | null; memo: string | null },
+  keepPhotoIds: number[],
+  addPhotoUris: string[],
+): Promise<void> {
+  const db = getDb();
+  await db.withTransactionAsync(async () => {
+    await db.runAsync(
+      'UPDATE wear_logs SET shoe_id = ?, date = ?, distance = ?, memo = ? WHERE id = ?',
+      fields.shoe_id,
+      fields.date,
+      fields.distance,
+      fields.memo,
+      id,
+    );
+    // 유지 목록에 없는 기존 사진 행 삭제
+    const existing = await db.getAllAsync<{ id: number }>(
+      'SELECT id FROM wear_log_photos WHERE wear_log_id = ?',
+      id,
+    );
+    for (const row of existing) {
+      if (!keepPhotoIds.includes(row.id)) {
+        await db.runAsync('DELETE FROM wear_log_photos WHERE id = ?', row.id);
+      }
+    }
+    // 새 사진 삽입
+    for (const uri of addPhotoUris) {
+      await db.runAsync(
+        'INSERT INTO wear_log_photos (wear_log_id, photo_uri) VALUES (?, ?)',
+        id,
+        uri,
+      );
+    }
+  });
+}
