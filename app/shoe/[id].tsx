@@ -129,7 +129,10 @@ export default function ShoeDetailScreen() {
         </Pressable>
       ))}
 
-      <Pressable onPress={onRetire} style={{ padding: 14, borderRadius: 10, backgroundColor: colors.card, alignItems: 'center', marginTop: 12 }}>
+      <Pressable onPress={() => router.push(`/shoe/edit/${shoeId}`)} style={{ padding: 14, borderRadius: 10, backgroundColor: colors.card, alignItems: 'center', marginTop: 12 }}>
+        <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>수정</Text>
+      </Pressable>
+      <Pressable onPress={onRetire} style={{ padding: 14, borderRadius: 10, backgroundColor: colors.card, alignItems: 'center' }}>
         <Text style={{ color: colors.textPrimary }}>{shoe.retired ? '은퇴 해제' : '은퇴 처리'}</Text>
       </Pressable>
       <Pressable onPress={onDelete} style={{ padding: 14, borderRadius: 10, backgroundColor: colors.card, alignItems: 'center' }}>
