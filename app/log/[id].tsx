@@ -78,6 +78,9 @@ export default function LogDetailScreen() {
           style={{ width: width - 32, height: width - 32, borderRadius: 12 }}
         />
       ))}
+      <Pressable onPress={() => router.push(`/log/edit/${logId}`)} style={{ padding: 14, borderRadius: 10, backgroundColor: colors.card, alignItems: 'center', marginTop: 8 }}>
+        <Text style={{ color: colors.textPrimary, fontWeight: '600' }}>수정</Text>
+      </Pressable>
       <Pressable onPress={onDelete} style={{ padding: 14, borderRadius: 10, backgroundColor: colors.card, alignItems: 'center', marginTop: 8 }}>
         <Text style={{ color: colors.danger }}>일지 삭제</Text>
       </Pressable>
