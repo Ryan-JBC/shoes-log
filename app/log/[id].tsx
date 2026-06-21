@@ -64,7 +64,7 @@ export default function LogDetailScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: colors.background }}>
+    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: 16, gap: 12 }}>
       <Stack.Screen options={{ title: log.date }} />
       <Text style={{ fontSize: 20, fontWeight: 'bold', color: colors.textPrimary }}>{shoeName}</Text>
       <Text style={{ color: colors.textSecondary }}>

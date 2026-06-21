@@ -74,7 +74,7 @@ export default function NewLogScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: colors.background }}>
+    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: 16, gap: 12 }}>
       <Stack.Screen options={{ title: '일지 작성' }} />
 
       <Text style={{ fontWeight: '600', color: colors.textPrimary }}>신발 선택 *</Text>

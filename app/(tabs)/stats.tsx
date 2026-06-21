@@ -13,15 +13,15 @@ const EMPTY: StatsResult = { totalDistance: 0, totalWears: 0, mostWorn: null, pe
 
 export default function StatsTab() {
   const { colors, accent } = useTheme();
-  const today = new Date().toISOString().slice(0, 10);
   const [kind, setKind] = useState<RangeKind>('month');
-  const [customStart, setCustomStart] = useState<string>(today);
-  const [customEnd, setCustomEnd] = useState<string>(today);
+  const [customStart, setCustomStart] = useState<string>('');
+  const [customEnd, setCustomEnd] = useState<string>('');
   const [stats, setStats] = useState<StatsResult>(EMPTY);
 
   const load = useCallback((k: RangeKind, cs: string, ce: string) => {
     (async () => {
       try {
+        const today = new Date().toISOString().slice(0, 10);
         const shoes = await getShoes('all');
         const logs = await getWearLogs();
         const range = rangeFor(k, today, { start: cs, end: ce });
@@ -30,9 +30,14 @@ export default function StatsTab() {
         Alert.alert('불러오기 실패', String(e));
       }
     })();
-  }, [today]);
+  }, []);
 
-  useFocusEffect(useCallback(() => { load(kind, customStart, customEnd); }, [kind, customStart, customEnd, load]));
+  useFocusEffect(useCallback(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    if (!customStart) setCustomStart(today);
+    if (!customEnd) setCustomEnd(today);
+    load(kind, customStart || today, customEnd || today);
+  }, [kind, customStart, customEnd, load]));
 
   const maxPerShoe = Math.max(1, ...stats.perShoe.map((s) => s.distance));
   const maxMonth = Math.max(1, ...stats.monthly.map((m) => m.distance));
@@ -98,9 +103,9 @@ export default function StatsTab() {
       ) : (
         <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6, height: 120 }}>
           {stats.monthly.map((m, i) => (
-            <View key={i} style={{ flex: 1, alignItems: 'center', gap: 4 }}>
-              <View style={{ width: '70%', height: `${(m.distance / maxMonth) * 100}%`, backgroundColor: accent, borderRadius: 4 }} />
-              <Text style={{ color: colors.textMuted, fontSize: 8 }}>{m.month.slice(5)}</Text>
+            <View key={i} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end' }}>
+              <View style={{ width: '70%', height: Math.max(2, (m.distance / maxMonth) * 96), backgroundColor: accent, borderRadius: 4 }} />
+              <Text style={{ color: colors.textMuted, fontSize: 8, marginTop: 4 }}>{m.month.slice(5)}</Text>
             </View>
           ))}
         </View>
