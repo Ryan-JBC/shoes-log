@@ -37,7 +37,9 @@ export default function RootLayout() {
           headerTintColor: darkColors.textPrimary,
           contentStyle: { backgroundColor: darkColors.background },
         }}
-      />
+      >
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
     </ThemeProvider>
   );
 }
