@@ -16,7 +16,7 @@ export default function EditShoeScreen() {
   useEffect(() => {
     getShoe(shoeId)
       .then((s) => { if (!s) { Alert.alert('오류', '신발을 찾을 수 없습니다.'); router.back(); } else setShoe(s); })
-      .catch((e) => Alert.alert('불러오기 실패', String(e)));
+      .catch((e) => { Alert.alert('불러오기 실패', String(e)); router.back(); });
   }, [shoeId]);
 
   if (!shoe) {
@@ -37,7 +37,9 @@ export default function EditShoeScreen() {
         input.photo_uri = shoe!.photo_uri;
       }
       await updateShoe(shoe!.id, input);
-      if (pickedPhotoUri && oldPhoto) await deletePhoto(oldPhoto);
+      if (pickedPhotoUri && oldPhoto) {
+        try { await deletePhoto(oldPhoto); } catch { /* cleanup-only: ignore */ }
+      }
       router.back();
     } catch (e) {
       Alert.alert('저장 실패', String(e));
