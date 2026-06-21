@@ -18,7 +18,6 @@ export default function SettingsTab() {
                 width: 40, height: 40, borderRadius: 20, backgroundColor: c,
                 borderWidth: selected ? 3 : 0, borderColor: colors.background,
                 shadowColor: selected ? c : 'transparent', shadowOpacity: selected ? 1 : 0, shadowRadius: 6,
-                outlineWidth: selected ? 2 : 0,
               }}
             />
           );

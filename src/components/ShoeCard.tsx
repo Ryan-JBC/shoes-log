@@ -17,7 +17,7 @@ export function ShoeCard({
   status: ReplacementStatus;
   onPress: () => void;
 }) {
-  const { colors, accent } = useTheme();
+  const { colors } = useTheme();
   const today = new Date().toISOString().slice(0, 10);
   const days = shoe.purchase_date ? daysSince(shoe.purchase_date, today) : null;
   const barColor = colors[STATUS_KEY[status]];

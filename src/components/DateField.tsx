@@ -19,7 +19,7 @@ export function DateField({
   placeholder?: string;
   maximumDate?: Date;
 }) {
-  const { colors, accent } = useTheme();
+  const { colors } = useTheme();
   const [show, setShow] = useState(false);
 
   const current = value ? new Date(value + 'T00:00:00') : new Date();
