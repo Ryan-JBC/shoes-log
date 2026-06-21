@@ -12,12 +12,22 @@ export default function EditShoeScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const shoeId = Number(id);
   const [shoe, setShoe] = useState<Shoe | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     getShoe(shoeId)
-      .then((s) => { if (!s) { Alert.alert('오류', '신발을 찾을 수 없습니다.'); router.back(); } else setShoe(s); })
-      .catch((e) => { Alert.alert('불러오기 실패', String(e)); router.back(); });
+      .then((s) => { if (!s) { Alert.alert('오류', '신발을 찾을 수 없습니다.'); setNotFound(true); router.back(); } else setShoe(s); })
+      .catch((e) => { Alert.alert('불러오기 실패', String(e)); setNotFound(true); router.back(); });
   }, [shoeId]);
+
+  if (notFound) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <Stack.Screen options={{ title: '신발 수정' }} />
+        <Text style={{ color: colors.textSecondary }}>신발을 찾을 수 없습니다.</Text>
+      </View>
+    );
+  }
 
   if (!shoe) {
     return (
