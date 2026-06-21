@@ -101,7 +101,7 @@ export function WearLogForm({
             <Image source={{ uri: p.photo_uri }} style={{ width: 80, height: 80, borderRadius: 8 }} />
             <Pressable onPress={() => setExisting((prev) => prev.filter((x) => x.id !== p.id))}
               style={{ position: 'absolute', top: -6, right: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: colors.danger, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ color: '#fff', fontWeight: 'bold' }}>×</Text>
+              <Text style={{ color: colors.textPrimary, fontWeight: 'bold' }}>×</Text>
             </Pressable>
           </View>
         ))}
@@ -110,7 +110,7 @@ export function WearLogForm({
             <Image source={{ uri }} style={{ width: 80, height: 80, borderRadius: 8 }} />
             <Pressable onPress={() => setNewPhotos((prev) => prev.filter((_, idx) => idx !== i))}
               style={{ position: 'absolute', top: -6, right: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: colors.danger, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ color: '#fff', fontWeight: 'bold' }}>×</Text>
+              <Text style={{ color: colors.textPrimary, fontWeight: 'bold' }}>×</Text>
             </Pressable>
           </View>
         ))}
